@@ -1,5 +1,4 @@
 # UAC_and_AV_bypasser
-# UAC and AV Bypasser
 
 This tool is a C# console application designed to bypass User Account Control (UAC) on Windows systems and provides functionalities to interact with and manage various antivirus (AV) solutions. It features an interactive shell interface, "Vortex Shell," for easy command execution.
 
