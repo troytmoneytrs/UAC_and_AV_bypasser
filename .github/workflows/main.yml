@@ -1,4 +1,4 @@
-name: Build UAC Bypasser
+name: Build UAC Bypasser (Self-Contained)
 
 on:
   push:
@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-    # We must use windows-latest because this project uses Windows APIs
     runs-on: windows-latest
 
     steps:
@@ -18,18 +17,24 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x # Adjust this to match your project's version
+        dotnet-version: '10.0.x' # Targeting the version from your error message
 
     - name: Restore dependencies
       run: dotnet restore
 
-    - name: Build Project
-      run: dotnet build --configuration Release --no-restore
+    - name: Publish Single File EXE
+      # -r win-x64: Targets 64-bit Windows
+      # --self-contained: Includes the .NET runtime in the EXE
+      # PublishSingleFile: Merges everything into one executable
+      run: |
+        dotnet publish -c Release -r win-x64 --self-contained true `
+        /p:PublishSingleFile=true `
+        /p:PublishReadyToRun=true `
+        /p:IncludeNativeLibrariesForSelfExtract=true
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: UAC_Bypasser_Executable
-        # This path assumes a standard dotnet build output. 
-        # You may need to adjust it (e.g., net6.0, net8.0, or net472)
-        path: bin/Release/**/UAC_Bypasser.exe
+        name: UAC_Bypasser_Standalone
+        # This path targets the specific publish folder created by the command above
+        path: bin/Release/net10.0-windows/win-x64/publish/UAC_Bypasser.exe
